@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#18192b">
+  <title>隔着时差</title>
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./time.js"></script>
+  <script defer src="./platform.js"></script>
+  <script defer src="./cards.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="app-header">
+      <div>
+        <h1>隔着时差</h1>
+        <p>想你时，看看你那边几点</p>
+      </div>
+      <button class="button capsule" id="add" type="button" disabled><span aria-hidden="true">＋</span> 添加</button>
+    </header>
+
+    <nav class="mode-switch" aria-label="时间模式">
+      <button type="button" data-mode="now" aria-pressed="true" disabled>此刻</button>
+      <button type="button" data-mode="compare" aria-pressed="false" disabled>换个时间</button>
+    </nav>
+
+    <main>
+      <p id="storage-message" class="notice" role="status" hidden></p>
+      <noscript><p class="notice">页面需要 JavaScript 才能显示时间。</p></noscript>
+      <p id="startup-status" class="sr-only" role="status">正在读取各地时间</p>
+
+      <section id="compare" class="compare-panel" aria-label="换个时间" hidden>
+        <div class="compare-reference">
+          <label class="field">参考地点<select id="reference"></select></label>
+          <button type="button" id="back-now" class="plain">回到此刻</button>
+        </div>
+        <form id="time-form">
+          <div class="fields date-fields">
+            <label class="field">日期<input id="date" type="date" min="0001-01-01" max="9999-12-31" required></label>
+            <label class="field">当地时间<input id="time" type="time" step="60" required></label>
+          </div>
+        </form>
+        <div class="quick" aria-label="常用时间">
+          <button type="button" class="button" data-quick="tonight">今晚八点</button>
+          <button type="button" class="button" data-quick="tomorrow">明早九点</button>
+        </div>
+        <p id="time-status" class="notice" role="status" hidden></p>
+        <div id="time-options" class="quick" aria-label="夏令时选项" hidden></div>
+        <details id="comparison-settings">
+          <summary>参与比较的地点</summary>
+          <div id="comparison-zones" class="checks"></div>
+        </details>
+      </section>
+
+      <div class="section-head clock-heading">
+        <h2 id="clock-heading">各地时间</h2>
+        <span id="clock-count">3 个时区</span>
+      </div>
+      <div id="clocks" class="clock-grid" aria-labelledby="clock-heading" aria-busy="true">
+        <article class="clock mood-dawn main-clock clock-placeholder">
+          <div class="clock-top"><div><h3>北京</h3><p>北京时间</p></div><span>我这边</span></div>
+          <div class="clock-time">--:--</div>
+          <p class="clock-date">正在读取当地时间</p>
+        </article>
+        <article class="clock mood-dusk clock-placeholder">
+          <div class="clock-top"><div><h3>纽约</h3><p>美国东部时间</p></div></div>
+          <div class="clock-time">--:--</div>
+          <p class="clock-date">正在读取当地时间</p>
+        </article>
+        <article class="clock mood-night clock-placeholder">
+          <div class="clock-top"><div><h3>伦敦</h3><p>英国当地时间</p></div></div>
+          <div class="clock-time">--:--</div>
+          <p class="clock-date">正在读取当地时间</p>
+        </article>
+      </div>
+      <details id="overlap" class="overlap-panel" hidden>
+        <summary>看重合时段</summary>
+        <div id="overlap-results"></div>
+      </details>
+    </main>
+
+    <div class="bottom-bar">
+      <button type="button" id="make-card" class="button primary" disabled><span aria-hidden="true">◇</span> 快速制卡</button>
+    </div>
+  </div>
+
+  <div id="overlay" class="overlay" hidden>
+    <section id="sheet" class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" tabindex="-1">
+      <div class="sheet-header">
+        <h2 id="sheet-title"></h2>
+        <button type="button" id="close-sheet" class="button close" aria-label="关闭">×</button>
+      </div>
+      <div id="sheet-body" class="sheet-body"></div>
+      <div id="card-footer" class="sheet-footer" hidden>
+        <div id="card-actions" class="quick" hidden></div>
+        <p id="card-note" class="hint" hidden>请在支持相册或分享的小红书客户端打开。</p>
+      </div>
+    </section>
+  </div>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>

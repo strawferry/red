@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fff9f2">
+  <title>借个光</title>
+  <style>html,body{margin:0;height:100%;background:#fff9f2}</style>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./platform.js" defer></script>
+  <script src="./camera.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <main id="app" data-view="board" data-effect="fixed">
+    <div id="light" class="light" aria-hidden="true">
+      <div id="neon-first" class="neon"></div>
+      <div id="neon-next" class="neon"></div>
+      <div id="dimmer" class="dimmer"></div>
+    </div>
+
+    <section id="board" class="board" aria-label="补光板">
+      <button id="light-area" class="light-area" type="button" data-start disabled aria-label="点光面隐藏控件"></button>
+      <header id="board-header" class="board-header">
+        <div class="wordmark">
+          <span class="brand-icon" aria-hidden="true"></span>
+          <h1>借个光</h1>
+        </div>
+        <button id="clean-screen" class="glass-button" type="button" data-start disabled>净屏</button>
+      </header>
+
+      <div id="board-message" class="board-message" role="status" aria-live="polite" hidden></div>
+      <section id="console" class="console" aria-label="灯光控制">
+        <div class="brightness-heading">
+          <label for="brightness">光板明暗</label>
+          <output id="brightness-value" for="brightness">100%</output>
+        </div>
+        <input id="brightness" class="range brightness-range" type="range" min="10" max="100" value="100" data-start disabled>
+        <div class="quick-colors" aria-label="常用光色">
+          <button type="button" class="color-button" data-preset="soft" aria-pressed="true" data-start disabled><span class="swatch swatch-soft" aria-hidden="true"></span>柔白</button>
+          <button type="button" class="color-button" data-preset="warm" aria-pressed="false" data-start disabled><span class="swatch swatch-warm" aria-hidden="true"></span>暖光</button>
+          <button type="button" class="color-button" data-preset="cool" aria-pressed="false" data-start disabled><span class="swatch swatch-cool" aria-hidden="true"></span>冷白</button>
+          <button id="start-neon" type="button" class="color-button" aria-pressed="false" data-start disabled><span class="swatch swatch-neon" aria-hidden="true"></span>随机霓虹</button>
+        </div>
+        <div class="board-actions">
+          <button id="open-colors" class="panel-button" type="button" aria-haspopup="dialog" aria-controls="colors" aria-expanded="false" data-start disabled>更多光色<span id="effect-label" class="effect-label" hidden></span></button>
+          <button id="open-camera" class="primary-button" type="button" data-start disabled><span class="camera-icon" aria-hidden="true"></span>补光自拍</button>
+        </div>
+      </section>
+    </section>
+
+    <div id="color-overlay" class="color-overlay" hidden>
+      <section id="colors" class="colors" role="dialog" aria-modal="true" aria-labelledby="color-title">
+        <header class="sheet-heading">
+          <h2 id="color-title">更多光色</h2>
+          <button id="close-colors" class="close-button" type="button" aria-label="关闭调色面板">×</button>
+        </header>
+        <div class="color-options">
+          <div id="camera-brightness-section" class="camera-brightness-section" hidden>
+            <div class="brightness-heading">
+              <label for="camera-brightness">光板明暗</label>
+              <output id="camera-brightness-value" for="camera-brightness">100%</output>
+            </div>
+            <input id="camera-brightness" class="range brightness-range" type="range" min="10" max="100" value="100">
+          </div>
+          <div class="scene-colors" aria-label="光色预设">
+            <button type="button" class="color-button" data-preset="soft" aria-pressed="true"><span class="swatch swatch-soft" aria-hidden="true"></span>柔白</button>
+            <button type="button" class="color-button" data-preset="warm" aria-pressed="false"><span class="swatch swatch-warm" aria-hidden="true"></span>暖光</button>
+            <button type="button" class="color-button" data-preset="cool" aria-pressed="false"><span class="swatch swatch-cool" aria-hidden="true"></span>冷白</button>
+            <button type="button" class="color-button" data-preset="peach" aria-pressed="false"><span class="swatch swatch-peach" aria-hidden="true"></span>蜜桃</button>
+            <button type="button" class="color-button" data-preset="lilac" aria-pressed="false"><span class="swatch swatch-lilac" aria-hidden="true"></span>粉紫</button>
+            <button type="button" class="color-button" data-preset="ice" aria-pressed="false"><span class="swatch swatch-ice" aria-hidden="true"></span>冰蓝</button>
+          </div>
+          <p id="color-tip" class="color-tip" aria-live="polite">柔白适合给暗处合照补一点光。</p>
+
+          <div class="custom-color" aria-label="自由调色">
+            <div class="custom-heading">
+              <h3>自由调色</h3>
+              <span id="color-hex" class="color-hex">#FFF9F2</span>
+            </div>
+            <div class="range-row">
+              <label for="hue">色相</label>
+              <input id="hue" class="range hue-range" type="range" min="0" max="359" value="28">
+            </div>
+            <div class="range-row">
+              <label for="saturation">饱和度</label>
+              <input id="saturation" class="range saturation-range" type="range" min="0" max="100" value="34">
+            </div>
+          </div>
+          <div class="effect-actions">
+            <button id="random-color" class="panel-button" type="button">随机一色</button>
+            <button id="camera-neon" class="panel-button" type="button" aria-pressed="false" hidden>随机霓虹</button>
+          </div>
+          <div class="preferences" aria-label="换色反馈">
+            <button id="vibration-setting" class="preference" type="button" aria-pressed="true"><span class="switch" aria-hidden="true"></span>振动</button>
+            <button id="sound-setting" class="preference" type="button" aria-pressed="false"><span class="switch" aria-hidden="true"></span>音效</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section id="camera" class="camera workspace" aria-label="补光自拍" hidden>
+      <header class="workspace-header">
+        <button id="camera-back" class="glass-button" type="button">返回灯板</button>
+        <h2>补光自拍</h2>
+      </header>
+      <div class="frame-area">
+        <div id="camera-frame" class="camera-frame">
+          <video id="camera-video" autoplay muted playsinline webkit-playsinline aria-label="前置相机取景"></video>
+          <div class="frame-lines" aria-hidden="true"></div>
+          <span id="countdown" class="countdown" aria-live="assertive" hidden></span>
+        </div>
+        <p id="camera-status" class="camera-status" role="status">正在打开前置相机…</p>
+        <button id="camera-retry" class="glass-button retry-camera" type="button" hidden>重新打开相机</button>
+      </div>
+      <div class="camera-controls">
+        <button id="camera-delay" class="glass-button delay-button" type="button" aria-pressed="false">3 秒</button>
+        <button id="shutter" class="shutter" type="button" aria-label="拍照" disabled><span aria-hidden="true"></span></button>
+        <button id="camera-lights" class="glass-button lights-button" type="button" aria-haspopup="dialog" aria-controls="colors" aria-expanded="false">灯光</button>
+      </div>
+    </section>
+
+    <section id="review" class="review workspace" aria-label="成片" hidden>
+      <header class="workspace-header">
+        <button id="review-back" class="glass-button" type="button">返回灯板</button>
+        <h2>成片</h2>
+      </header>
+      <div class="photo-area">
+        <img id="photo" alt="本次补光自拍的照片">
+      </div>
+      <div class="review-controls">
+        <p id="review-status" class="review-status" role="status"></p>
+        <div class="review-actions">
+          <button id="retake" class="panel-button" type="button">重拍</button>
+          <button id="save-photo" class="primary-button" type="button" hidden>存相册</button>
+          <button id="post-photo" class="panel-button" type="button" hidden>发图文</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

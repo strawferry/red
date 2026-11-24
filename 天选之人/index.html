@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#120d25">
+  <title>天选之人</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="round.js" defer></script>
+  <script src="platform.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div id="app" data-mode="touch" data-phase="waiting">
+    <header class="app-header">
+      <div class="brand-lockup">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <h1>天选之人</h1>
+      </div>
+
+      <div class="header-actions">
+        <button id="recent-button" class="quiet-button quiet-button--recent" type="button" hidden disabled>
+          <span>最近一轮</span>
+        </button>
+        <button id="sound-toggle" class="icon-button" type="button" aria-label="音效开关" aria-pressed="true" disabled>
+          <span class="sound-icon" aria-hidden="true"></span>
+          <span class="sr-only" data-sound-label>音效开</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <section class="round-heading" aria-label="本轮状态">
+        <div class="round-heading__count" id="count-label">识别到 0 位</div>
+        <p id="round-status">两人起抽</p>
+      </section>
+
+      <section id="stage" class="stage" aria-label="抽签台面">
+        <div id="touch-board" class="touch-board">
+          <div id="touch-intro" class="touch-intro">
+            <span class="touch-intro__seal" aria-hidden="true"></span>
+            <strong>每人按住一根手指</strong>
+            <span>按住入场，松手退场</span>
+          </div>
+          <div id="hold-points" class="markers" aria-hidden="true"></div>
+          <div id="markers" class="markers" aria-live="polite" aria-label="触点编号"></div>
+        </div>
+
+        <div id="seat-board" class="seat-board" hidden aria-label="席位选择区"></div>
+
+        <div id="timer" class="timer" hidden aria-live="assertive" aria-atomic="true">
+          <span id="timer-value" class="timer__value">8</span>
+          <span id="timer-note" class="timer__note">按住到开奖</span>
+        </div>
+      </section>
+
+      <div id="result-badge" class="result-badge" hidden aria-live="polite">
+        <span data-winner-number></span>
+        <span data-winner-label></span>
+      </div>
+
+      <div class="control-dock">
+        <section id="seat-setup" class="seat-setup" hidden aria-label="席位人数">
+          <div class="seat-counter">
+            <button id="seat-minus" class="counter-button" type="button" aria-label="减少席位" disabled>−</button>
+            <output id="seat-count" class="seat-count" for="seat-minus seat-plus">8</output>
+            <button id="seat-plus" class="counter-button" type="button" aria-label="增加席位" disabled>＋</button>
+          </div>
+          <div class="seat-presets" aria-label="快速选择席位">
+            <button type="button" data-seats="4" disabled>4 人</button>
+            <button type="button" data-seats="8" disabled>8 人</button>
+            <button type="button" data-seats="12" disabled>12 人</button>
+          </div>
+        </section>
+
+        <section id="seat-actions" class="seat-actions" hidden>
+          <button id="start-raffle" class="primary-button" type="button" disabled>开始抽签</button>
+        </section>
+
+        <div class="mode-switch">
+          <button id="switch-mode" class="mode-button" type="button" disabled>座号抽签</button>
+        </div>
+
+        <section id="final-actions" class="final-actions" hidden aria-label="结果操作">
+          <button id="save-result" class="primary-button" type="button" disabled>保存结果</button>
+          <button id="restart" class="secondary-button" type="button" disabled>再抽一次</button>
+          <button id="share-result" class="secondary-button" type="button" hidden disabled>分享工具</button>
+        </section>
+
+        <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+      </div>
+    </main>
+
+    <div id="result-preview" class="result-preview" hidden role="dialog" aria-modal="true" aria-labelledby="preview-title">
+      <div class="result-preview__shade"></div>
+      <section class="result-preview__card">
+        <div class="result-preview__topline">
+          <span>结果预览</span>
+          <button id="close-preview" class="close-button" type="button" aria-label="关闭预览" disabled>×</button>
+        </div>
+        <h2 id="preview-title">保存这一轮</h2>
+        <div class="result-preview__image-wrap">
+          <img id="result-image" alt="本轮抽签结果预览">
+        </div>
+        <p class="result-preview__note" data-preview-hint>图片仅保留在当前设备。</p>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

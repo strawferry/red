@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fff5e7">
+  <title>蛋糕分分</title>
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./geometry.js"></script>
+  <script defer src="./illustration.js"></script>
+  <script defer src="./platform.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <main id="app" class="app">
+    <header class="heading">
+      <h1>蛋糕分分</h1>
+      <p>选人数，照着切</p>
+    </header>
+
+    <section class="board" aria-labelledby="portion-title">
+      <div class="board-top">
+        <h2 id="portion-title">分成 <strong id="portion-count">6</strong> 份</h2>
+        <button id="replay" class="button replay" type="button" disabled><span aria-hidden="true">↻</span> 重播切法</button>
+      </div>
+      <button class="cake-stage" id="stage" type="button" aria-label="重播分切示意图" disabled>
+        <canvas id="cake" width="760" height="760" hidden aria-hidden="true"></canvas>
+        <span class="fallback" id="fallback" aria-hidden="true">
+          <i></i><i></i><i></i>
+          <b>1</b><b>2</b><b>3</b><b>4</b><b>5</b><b>6</b>
+        </span>
+      </button>
+      <div class="cut-guide">
+        <p class="cut-hint" id="cut-hint">从圆心过刀，把相对的两条切线连成一刀。</p>
+        <div class="guide-actions">
+          <span class="knife-count" id="knife-count">共 3 刀</span>
+          <button type="button" id="step" class="button compact" disabled>逐刀看</button>
+        </div>
+        <div class="steps" id="steps" hidden>
+          <button type="button" id="prev" class="button compact">上一刀</button>
+          <button type="button" id="next" class="button compact">下一刀</button>
+        </div>
+      </div>
+      <p id="notice" class="notice" hidden role="status"></p>
+      <noscript><p class="notice">上图是圆形蛋糕分成 6 份的切法。启用 JavaScript 后可调整形状和人数。</p></noscript>
+    </section>
+
+    <section aria-labelledby="shape-title" class="control">
+      <div class="control-head">
+        <h2 id="shape-title">蛋糕形状</h2>
+        <span id="shape-limit" class="muted" hidden>心形参考 · 2–8 份</span>
+      </div>
+      <div class="shape-list">
+        <button type="button" data-shape="round" class="tile" aria-pressed="true" disabled><i aria-hidden="true"></i>圆形</button>
+        <button type="button" data-shape="square" class="tile" aria-pressed="false" disabled><i aria-hidden="true"></i>方形</button>
+        <button type="button" data-shape="rectangle" class="tile" aria-pressed="false" disabled><i aria-hidden="true"></i>长方形</button>
+        <button type="button" data-shape="heart" class="tile" aria-pressed="false" disabled><i aria-hidden="true">♥</i>心形</button>
+      </div>
+      <h2 id="count-title">几个人分？</h2>
+      <div class="count-list" aria-labelledby="count-title">
+        <button type="button" class="tile adjust" id="minus" aria-label="减少一份" disabled>−</button>
+        <button type="button" class="tile" data-count="4" aria-pressed="false" aria-label="4 人" disabled>4</button>
+        <button type="button" class="tile" data-count="6" aria-pressed="true" aria-label="6 人" disabled>6</button>
+        <button type="button" class="tile" data-count="8" aria-pressed="false" aria-label="8 人" disabled>8</button>
+        <button type="button" class="tile" data-count="10" aria-pressed="false" aria-label="10 人" disabled>10</button>
+        <button type="button" class="tile adjust" id="plus" aria-label="增加一份" disabled>+</button>
+      </div>
+    </section>
+
+    <div class="main-action">
+      <button type="button" class="button primary" id="poster-open" disabled>生成分切图</button>
+    </div>
+    <p class="sr-only" id="status" role="status"></p>
+  </main>
+
+  <div class="overlay" id="overlay" hidden>
+    <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="poster-title">
+      <header class="sheet-head">
+        <h2 id="poster-title">分切图</h2>
+        <button type="button" class="button close" id="poster-close" aria-label="关闭">×</button>
+      </header>
+      <div class="sheet-body" id="poster-body"></div>
+      <div class="sheet-foot" id="poster-actions" hidden>
+        <button type="button" id="save" class="button primary" hidden>保存到相册</button>
+        <button type="button" id="share" class="button" hidden>分享</button>
+        <button type="button" id="post" class="button" hidden>发图文</button>
+      </div>
+      <p id="poster-hint" class="sheet-hint" hidden>可在小红书中打开，保存分切图。</p>
+      <p id="poster-status" class="sheet-hint" role="status" hidden></p>
+    </section>
+  </div>
+</body>
+</html>
