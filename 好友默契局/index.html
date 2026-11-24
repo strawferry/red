@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>好友默契局</title>
+  <link rel="icon" href="./assets/logo.png" type="image/png">
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./packs.js"></script>
+  <script defer src="./quiz.js"></script>
+  <script defer src="./platform.js"></script>
+  <script defer src="./cards.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <div class="shell" id="app">
+    <header class="masthead">
+      <button class="brand" type="button" data-action="home" disabled>
+        <img class="brand-mark" src="./assets/logo.png" alt="" width="38" height="38"><span>好友默契局</span>
+      </button>
+      <button class="history-button" type="button" data-action="history" disabled>我的题单</button>
+    </header>
+    <main>
+      <section id="home-view" aria-labelledby="home-title">
+        <div class="hero">
+          <h1 id="home-title" tabindex="-1">认识这么久，<br>你有<em>多懂我？</em></h1>
+          <p>出几道关于自己的小题，看看朋友能猜中几道。</p>
+        </div>
+        <button class="sample" type="button" data-action="trial" disabled>
+          <span class="sample-eyebrow">试两道 <span aria-hidden="true">↗</span></span>
+          <span class="sample-title">我遇到特别好吃的店，<br>下次会怎么点？</span>
+          <span class="sample-options">
+            <span><i aria-hidden="true">A</i> 还点同一道</span>
+            <span><i aria-hidden="true">B</i> 试试别的菜</span>
+          </span>
+        </button>
+        <div class="home-actions">
+          <button class="button primary" type="button" data-action="create" disabled>出一套题 <span aria-hidden="true">↗</span></button>
+          <button class="button secondary" type="button" data-action="enter" disabled>答朋友的题 <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="home-resume" id="home-resume" hidden></div>
+        <p id="boot-status" class="note" role="status">正在准备题卡。若长时间未就绪，请退出后重新打开。</p>
+      </section>
+      <section id="flow" hidden></section>
+    </main>
+    <p id="notice" class="notice" role="status" hidden></p>
+  </div>
+  <div id="poster-layer" class="poster-layer" hidden>
+    <section class="poster-dialog" role="dialog" aria-modal="true" aria-labelledby="poster-heading">
+      <div class="poster-header">
+        <h2 id="poster-heading">预览分享图</h2>
+        <button type="button" id="poster-close" class="history-button">关闭</button>
+      </div>
+      <img id="poster-image" alt="分享卡预览">
+      <div class="poster-actions" id="poster-actions"></div>
+    </section>
+  </div>
+</body>
+</html>
