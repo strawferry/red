@@ -10,6 +10,8 @@
   const resume = document.getElementById("home-resume");
   const notice = document.getElementById("notice");
   const posterLayer = document.getElementById("poster-layer");
+  const confirmLayer = document.getElementById("confirm-layer");
+  const confirmMessage = document.getElementById("confirm-message");
   const posterImage = document.getElementById("poster-image");
   const posterActions = document.getElementById("poster-actions");
   const characters = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
@@ -49,6 +51,28 @@
 
   function record(code) {
     return store.records.find(entry => entry.code === code);
+  }
+
+  function formatTime(timestamp) {
+    const date = new Date(timestamp);
+    const pad = value => String(value).padStart(2, "0");
+    return (date.getMonth() + 1) + "月" + date.getDate() + "日 " + pad(date.getHours()) + ":" + pad(date.getMinutes());
+  }
+
+  function recordMeta(entry, challenge) {
+    const parts = [];
+    if (entry.name) parts.push("署名：" + entry.name);
+    if (entry.createdAt) parts.push(formatTime(entry.createdAt) + " 出题");
+    const first = challengeQuestion(challenge, 0);
+    if (first && first.title) {
+      const title = first.title.length > 16 ? first.title.slice(0, 16) + "…" : first.title;
+      parts.push("首题：" + title);
+    }
+    return parts.join(" · ");
+  }
+
+  function codeTail(code) {
+    return "编号 …" + String(code).replace(/[^a-zA-Z0-9]/g, "").slice(-4).toUpperCase();
   }
 
   function announce(message) {
@@ -221,7 +245,7 @@
       action("预览挑战图", "poster-invite", "primary") +
       (platform.has("share") ? action("发小工具卡", "share-tool") : "") +
       action("查看收回来的成绩", "record", "secondary", entry.code) +
-      '<div class="trailing">' + link("用这份题单试答", "try-own", entry.code) + "</div>";
+      '<div class="trailing">' + link("查看题单和答案", "view-answers", entry.code) + "</div>";
     return layout("history", "题单已生成", "轮到朋友来猜", body);
   }
 
@@ -267,10 +291,12 @@
   function renderHistory() {
     const list = store.records.map(entry => {
       const challenge = quiz.readChallenge(entry.code);
+      const meta = recordMeta(entry, challenge);
       return '<button type="button" class="record record-button" data-action="record" data-value="' + escape(entry.code) +
         '"><span><span class="record-name">' + escape(themeName(challenge.themeId)) + " · " + challenge.answers.length + " 题" +
-        '</span><span class="note">' + entry.receipts.length +
-        " 份已收回执</span></span><span aria-hidden=\"true\">›</span></button>";
+        '</span>' + (meta ? '<span class="note record-meta">' + escape(meta) + "</span>" : "") +
+        '<span class="note record-meta">' + entry.receipts.length +
+        " 份已收回执 · " + codeTail(entry.code) + "</span></span><span aria-hidden=\"true\">›</span></button>";
     }).join("");
     return layout("home", "", "我的题单",
       (!canSave ? '<p class="note">当前环境只保留本次打开的记录。</p>' : "") +
@@ -284,14 +310,62 @@
     const sorted = entry.receipts.slice().sort((left, right) => right.score - left.score);
     const rows = sorted.map((receipt, index) =>
       '<div class="score-row"><div><b>' + receipt.score + "/" + challenge.answers.length + '</b>　' + escape(receipt.name || "朋友 " + (index + 1)) +
-      "</div>" + link("移除", "remove-receipt", receipt.code) + "</div>").join("");
-    const body = '<div class="record"><strong>已收到的回执</strong><p class="note">朋友主动发回并导入后才会显示。</p>' +
+      "</div>" + link("看细节", "view-receipt", receipt.code) + link("移除", "remove-receipt", receipt.code) + "</div>").join("");
+    const meta = recordMeta(entry, challenge);
+    const body = (meta ? '<p class="note">' + escape(meta) + " · " + codeTail(entry.code) + "</p>" : "") +
+      '<div class="record"><strong>已收到的回执</strong><p class="note">朋友主动发回并导入后才会显示。</p>' +
       (rows || '<p class="note setup-note">还没有成绩。答完后请朋友点「把成绩发给 TA」。</p>') +
       "</div>" + action("导入朋友的成绩", "receive", "primary") +
       action("重新发邀请", "invite", "secondary", entry.code) +
-      '<div class="trailing">' + link("试答此题单", "try-own", entry.code) +
+      '<div class="trailing">' + link("题单和答案", "view-answers", entry.code) +
       link("删除题单", "remove-record", entry.code) + "</div>";
     return layout("history", "", themeName(challenge.themeId) + " · " + challenge.answers.length + " 题", body);
+  }
+
+  function renderReview() {
+    const entry = record(view.code);
+    const challenge = quiz.readChallenge(entry.code);
+    const items = challenge.answers.map((answer, index) => {
+      const item = challengeQuestion(challenge, index);
+      const options = item.options.map((option, optionIndex) => {
+        const mine = optionIndex === answer;
+        return '<div class="review-option' + (mine ? " mine" : "") + '"><span class="choice-letter" aria-hidden="true">' +
+          (optionIndex === 0 ? "A" : "B") + "</span><span>" + escape(option) + "</span>" +
+          (mine ? '<span class="review-badge">我的答案</span>' : "") + "</div>";
+      }).join("");
+      return '<div class="record review-item"><span class="eyebrow">第 ' + (index + 1) + " 题</span>" +
+        '<p class="review-title">' + escape(item.title) + '</p><div class="review-options">' + options + "</div></div>";
+    }).join("");
+    return layout("record-back", "", "题单和答案", items);
+  }
+
+  function renderReceipt() {
+    const entry = record(view.code);
+    const challenge = quiz.readChallenge(entry.code);
+    const receipt = entry.receipts.find(item => item.code === view.receipt);
+    const parsed = receipt && quiz.readReceipt(receipt.code, challenge);
+    if (!receipt || !parsed) return layout("history", "", "答题细节", '<p class="note">这份成绩读不出来了。</p>');
+    const items = challenge.answers.map((answer, index) => {
+      const guess = parsed.guesses[index];
+      const correct = guess === answer;
+      const item = challengeQuestion(challenge, index);
+      const options = item.options.map((option, optionIndex) => {
+        const isAnswer = optionIndex === answer;
+        const isGuess = optionIndex === guess;
+        const badge = isAnswer && isGuess ? "我的答案 · TA 也选了" :
+          isAnswer ? "我的答案" : isGuess ? "TA 选的" : "";
+        return '<div class="review-option' + (isAnswer ? " mine" : isGuess ? " theirs" : "") +
+          '"><span class="choice-letter" aria-hidden="true">' + (optionIndex === 0 ? "A" : "B") +
+          "</span><span>" + escape(option) + "</span>" +
+          (badge ? '<span class="review-badge">' + badge + "</span>" : "") + "</div>";
+      }).join("");
+      return '<div class="record review-item"><div class="review-head"><span class="eyebrow">第 ' + (index + 1) + " 题</span>" +
+        '<span class="review-status ' + (correct ? "ok" : "miss") + '">' + (correct ? "答对了" : "答错了") + "</span></div>" +
+        '<p class="review-title">' + escape(item.title) + '</p><div class="review-options">' + options + "</div></div>";
+    }).join("");
+    const summary = '<p class="note">' + escape(receipt.name || "朋友") + " 一共答了 " + challenge.answers.length +
+      " 题，答对 " + parsed.score + " 题。下面是每一题的对照。</p>";
+    return layout("record-back", "", "答题细节", summary + items);
   }
 
   const templates = {
@@ -306,7 +380,9 @@
     result: renderResult,
     "trial-result": renderResult,
     history: renderHistory,
-    record: renderRecord
+    record: renderRecord,
+    review: renderReview,
+    receipt: renderReceipt
   };
 
   function render() {
@@ -376,7 +452,7 @@
         announce("题单还未生成，请检查每一题的题目、选项和答案。");
         return;
       }
-      store.records.unshift({ code: challenge.code, name: current.name, receipts: [] });
+      store.records.unshift({ code: challenge.code, name: current.name, receipts: [], createdAt: Date.now() });
       store.maker = null;
       save();
       show("invite", { code: challenge.code });
@@ -505,6 +581,24 @@
     }
   }
 
+  let confirmResolve = null;
+
+  function confirmAction(message) {
+    if (confirmResolve) return Promise.resolve(false);
+    confirmMessage.textContent = message;
+    confirmLayer.hidden = false;
+    document.getElementById("confirm-cancel").focus();
+    return new Promise(resolve => { confirmResolve = resolve; });
+  }
+
+  function settleConfirm(value) {
+    if (!confirmResolve) return;
+    const resolve = confirmResolve;
+    confirmResolve = null;
+    confirmLayer.hidden = true;
+    resolve(value);
+  }
+
   function closePoster() {
     posterRequest++;
     posterLayer.hidden = true;
@@ -550,7 +644,7 @@
   }
 
   async function aiSetup(button) {
-    if (store.maker && !window.confirm("开始新题单会替换尚未完成的草稿，继续吗？")) return;
+    if (store.maker && !(await confirmAction("开始新题单会替换尚未完成的草稿，继续吗？"))) return;
     const origin = view;
     const selected = theme(view.themeId);
     button.disabled = true;
@@ -568,8 +662,8 @@
     }
   }
 
-  function removeEntry(code, receiptCode) {
-    if (!window.confirm(receiptCode ? "移除这份成绩？" : "删除本机的题单和已收成绩？")) return;
+  async function removeEntry(code, receiptCode) {
+    if (!(await confirmAction(receiptCode ? "移除这份成绩？" : "删除本机的题单和已收成绩？"))) return;
     if (receiptCode) {
       const entry = record(code);
       entry.receipts = entry.receipts.filter(item => item.code !== receiptCode);
@@ -615,7 +709,8 @@
     record: code => show("record", { code }),
     "record-back": () => show("record", { code: view.code }),
     receive: () => show("receive", { code: view.code }),
-    "try-own": code => startAnswer(quiz.readChallenge(code), true),
+    "view-answers": code => show("review", { code }),
+    "view-receipt": receiptCode => show("receipt", { code: view.code, receipt: receiptCode }),
     "remove-receipt": code => removeEntry(view.code, code),
     "remove-record": code => removeEntry(code),
     pick: () => document.getElementById("card-file").click()
@@ -628,7 +723,8 @@
         return;
       }
       const button = event.target.closest && event.target.closest("button[data-action]");
-      if (!button || button.disabled || (!posterLayer.hidden && !posterLayer.contains(button))) return;
+      if (!button || button.disabled || (!posterLayer.hidden && !posterLayer.contains(button)) ||
+        (!confirmLayer.hidden && !confirmLayer.contains(button))) return;
       const name = button.dataset.action;
       if (name.startsWith("poster-")) openPoster(name.slice(7), button);
       else if (name.startsWith("native-") || name === "share-tool") nativeAction(name, button);
@@ -637,8 +733,9 @@
     flow.addEventListener("submit", event => {
       event.preventDefault();
       if (event.target.dataset.form === "setup") {
-        if (store.maker && !window.confirm("开始新题单会替换尚未完成的草稿，继续吗？")) return;
-        startMaker();
+        if (store.maker) {
+          confirmAction("开始新题单会替换尚未完成的草稿，继续吗？").then(ok => { if (ok) startMaker(); });
+        } else startMaker();
       } else if (event.target.dataset.form === "code") importCode(fieldValue("typed-code"));
     });
     flow.addEventListener("change", event => {
@@ -647,6 +744,9 @@
       event.target.value = "";
       importImage(file);
     });
+    document.getElementById("confirm-ok").addEventListener("click", () => settleConfirm(true));
+    document.getElementById("confirm-cancel").addEventListener("click", () => settleConfirm(false));
+    confirmLayer.addEventListener("click", event => { if (event.target === confirmLayer) settleConfirm(false); });
     document.getElementById("poster-close").addEventListener("click", closePoster);
     posterLayer.addEventListener("click", event => { if (event.target === posterLayer) closePoster(); });
     posterLayer.addEventListener("focusout", event => {
@@ -655,7 +755,9 @@
       }
     });
     document.addEventListener("keydown", event => {
-      if (event.key === "Escape" && !posterLayer.hidden) closePoster();
+      if (event.key !== "Escape") return;
+      if (!confirmLayer.hidden) settleConfirm(false);
+      else if (!posterLayer.hidden) closePoster();
     });
     window.addEventListener("resize", platform.refreshInsets);
     document.addEventListener("visibilitychange", () => {
@@ -689,7 +791,7 @@
         if (parsed) rows.push({ code: parsed.code, score: parsed.score, name: String(receipt.name || "").slice(0, 12) });
         return rows;
       }, []);
-      records.push({ code: challenge.code, name: String(entry.name || "").slice(0, 12), receipts });
+      records.push({ code: challenge.code, name: String(entry.name || "").slice(0, 12), receipts, createdAt: Number.isFinite(entry.createdAt) ? entry.createdAt : 0 });
       return records;
     }, []);
     store.pausedCustomDraft = data.pausedCustomDraft || null;
