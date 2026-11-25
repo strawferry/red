@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>硬币贴边</title>
+  <link rel="icon" href="./assets/logo.png" type="image/png">
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./game.js"></script>
+  <script defer src="./platform.js"></script>
+  <script defer src="./cards.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <div class="shell" id="app">
+    <header class="masthead">
+      <button class="brand" type="button" data-action="home" disabled>
+        <img class="brand-mark" src="./assets/logo.png" alt="" width="38" height="38"><span>硬币贴边</span>
+      </button>
+      <span class="masthead-note">离悬崖越近越赢</span>
+    </header>
+    <main>
+      <section id="home-view" aria-labelledby="home-title">
+        <div class="hero">
+          <span class="floaty f1" aria-hidden="true">🪙</span>
+          <span class="floaty f2" aria-hidden="true">✨</span>
+          <span class="floaty f3" aria-hidden="true">😱</span>
+          <h1 id="home-title" tabindex="-1">停在悬崖边，<br>差 <em>1 毫米</em>封神。</h1>
+          <p>把硬币弹向桌子边缘，停得越贴边越厉害。用力过猛？直接飞下悬崖。</p>
+        </div>
+        <div class="best-card" id="best-card" hidden></div>
+        <div class="home-actions">
+          <button class="button primary" type="button" data-action="start" disabled>开始挑战 <span aria-hidden="true">→</span></button>
+        </div>
+        <p class="note how">玩法：按住硬币向右滑再松手，硬币会滑向桌沿。每局 3 次机会，取离桌沿最近的一次。停太远不甘心，冲过头就坠落。</p>
+        <p id="boot-status" class="note" role="status">正在摆桌子。若长时间未就绪，请退出后重新打开。</p>
+      </section>
+      <section id="flow" hidden></section>
+    </main>
+    <p id="notice" class="notice" role="status" hidden></p>
+  </div>
+  <div id="poster-layer" class="poster-layer" hidden>
+    <section class="poster-dialog" role="dialog" aria-modal="true" aria-labelledby="poster-heading">
+      <div class="poster-header">
+        <h2 id="poster-heading">成绩卡</h2>
+        <button type="button" id="poster-close" class="history-button">关闭</button>
+      </div>
+      <img id="poster-image" alt="硬币贴边成绩卡">
+      <div class="poster-actions" id="poster-actions"></div>
+    </section>
+  </div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>麻辣烫挑战</title>
+  <link rel="icon" href="./assets/logo.png" type="image/png">
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./game.js"></script>
+  <script defer src="./platform.js"></script>
+  <script defer src="./cards.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <div class="shell" id="app">
+    <header class="masthead">
+      <button class="brand" type="button" data-action="home" disabled>
+        <img class="brand-mark" src="./assets/logo.png" alt="" width="38" height="38"><span>麻辣烫挑战</span>
+      </button>
+      <span class="masthead-note">目标 250g</span>
+    </header>
+    <main>
+      <section id="home-view" aria-labelledby="home-title">
+        <div class="hero">
+          <span class="floaty f1" aria-hidden="true">🌶️</span>
+          <span class="floaty f2" aria-hidden="true">🍜</span>
+          <span class="floaty f3" aria-hidden="true">🍢</span>
+          <h1 id="home-title" tabindex="-1">正好 <em>250 克</em>，<br>你敢信手感吗？</h1>
+          <p>凭感觉往碗里加食材，不许看秤。称重那一刻，差几克见分晓。</p>
+        </div>
+        <div class="best-card" id="best-card" hidden></div>
+        <div class="home-actions">
+          <button class="button primary" type="button" data-action="start" disabled>开始挑战 <span aria-hidden="true">→</span></button>
+        </div>
+        <p class="note how">玩法：点食材往碗里加，过程不显示克数。觉得差不多了就点「称重出锅」，离 250g 越近越厉害。</p>
+        <p id="boot-status" class="note" role="status">正在热锅。若长时间未就绪，请退出后重新打开。</p>
+      </section>
+      <section id="flow" hidden></section>
+    </main>
+    <p id="notice" class="notice" role="status" hidden></p>
+  </div>
+  <div id="poster-layer" class="poster-layer" hidden>
+    <section class="poster-dialog" role="dialog" aria-modal="true" aria-labelledby="poster-heading">
+      <div class="poster-header">
+        <h2 id="poster-heading">成绩卡</h2>
+        <button type="button" id="poster-close" class="history-button">关闭</button>
+      </div>
+      <img id="poster-image" alt="麻辣烫挑战成绩卡">
+      <div class="poster-actions" id="poster-actions"></div>
+    </section>
+  </div>
+</body>
+</html>
