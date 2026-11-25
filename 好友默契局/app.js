@@ -114,9 +114,9 @@
   }
 
   function layout(back, label, title, content) {
-    return '<div class="page">' + link("‹ 返回", back, undefined, "back-button") +
+    return '<div class="page"><div class="page-head">' + link("‹ 返回", back, undefined, "back-button") +
       (label ? '<span class="eyebrow">' + escape(label) + "</span>" : "") +
-      '<h1 class="page-title" tabindex="-1">' + escape(title) + "</h1>" + content + "</div>";
+      '</div><h1 class="page-title" tabindex="-1">' + escape(title) + "</h1>" + content + "</div>";
   }
 
   function field(label, id, value, attrs) {
@@ -223,8 +223,8 @@
         '<span class="choice-icon" aria-hidden="true">' + escape(item.icons[index]) + "</span></button>";
     }).join("");
     const label = trying ? "示例 · 试两道" : (making ? "出题 · " : "猜朋友 · ") + themeName(current.themeId);
-    return '<div class="page">' + link("‹ 回首页", "home", undefined, "back-button") +
-      '<span class="eyebrow">' + label + " · " + (step + 1) + " / " + count + "</span>" +
+    return '<div class="page"><div class="page-head">' + link("‹ 回首页", "home", undefined, "back-button") +
+      '<span class="eyebrow">' + label + " · " + (step + 1) + " / " + count + "</span></div>" +
       progress(step, count) + '<h1 class="question-heading" tabindex="-1">' + escape(item.title) +
       '</h1><div class="choices">' + options + '</div><div class="trailing">' +
       (step > 0 ? link("上一题", "previous") : "<span></span>") +

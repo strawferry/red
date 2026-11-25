@@ -37,12 +37,12 @@ h1:focus, h2:focus { outline: none; }
   min-height: 100vh;
   margin: 0 auto;
   padding: 0 24px 34px;
-  padding-top: var(--native-top);
+  padding-top: calc(var(--native-top) + 8px);
   padding-bottom: calc(34px + var(--native-bottom));
 }
 @supports (padding-top: max(0px, 1px)) {
   .shell {
-    padding-top: max(var(--native-top), env(safe-area-inset-top));
+    padding-top: calc(max(var(--native-top), env(safe-area-inset-top)) + 8px);
     padding-bottom: calc(34px + max(var(--native-bottom), env(safe-area-inset-bottom)));
     padding-left: max(24px, env(safe-area-inset-left));
     padding-right: max(24px, env(safe-area-inset-right));
@@ -128,7 +128,10 @@ h1, h2, h3, p { margin: 0; }
   from { opacity: 0; transform: translateX(16px); }
   to { opacity: 1; transform: translateX(0); }
 }
-.page-title { margin: 6px 0 9px; font-size: 34px; letter-spacing: -.05em; font-weight: 900; line-height: 1.19; }
+.page-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.page-head .back-button { margin-bottom: 0; }
+.page-head .eyebrow { text-align: right; }
+.page-title { margin: 0 0 9px; font-size: 34px; letter-spacing: -.05em; font-weight: 900; line-height: 1.19; }
 .back-button {
   display: inline-flex;
   align-items: center;

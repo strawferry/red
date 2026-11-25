@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>别打地鼠</title>
+  <link rel="icon" href="./assets/logo.png" type="image/png">
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./game.js"></script>
+  <script defer src="./platform.js"></script>
+  <script defer src="./cards.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <div class="shell" id="app">
+    <header class="masthead">
+      <button class="brand" type="button" data-action="home" disabled>
+        <img class="brand-mark" src="./assets/logo.png" alt="" width="38" height="38"><span>别打地鼠</span>
+      </button>
+      <span class="masthead-note">只打人 · 不打鼠</span>
+    </header>
+    <main>
+      <section id="home-view" aria-labelledby="home-title">
+        <div class="hero">
+          <span class="floaty f1" aria-hidden="true">🐹</span>
+          <span class="floaty f2" aria-hidden="true">🧑</span>
+          <span class="floaty f3" aria-hidden="true">🚫</span>
+          <h1 id="home-title" tabindex="-1">地鼠<em>一只都别打</em>，<br>只打混进来的人</h1>
+          <p>45 秒反向打地鼠：冒头的地鼠全是陷阱，打错一只扣 15 分。</p>
+        </div>
+        <div class="best-card" id="best-card" hidden></div>
+        <div class="home-actions">
+          <button class="button primary" type="button" data-action="start" disabled>开始挑战 <span aria-hidden="true">→</span></button>
+        </div>
+        <p class="note how">玩法：从洞里探头的，🐹 地鼠千万别碰，只打 🧑 人类。打中 +10，连击满 5 额外 +10；误伤地鼠 −15 还清零连击。</p>
+        <p id="boot-status" class="note" role="status">正在挖洞。若长时间未就绪，请退出后重新打开。</p>
+      </section>
+      <section id="flow" hidden></section>
+    </main>
+    <p id="notice" class="notice" role="status" hidden></p>
+  </div>
+  <div id="poster-layer" class="poster-layer" hidden>
+    <section class="poster-dialog" role="dialog" aria-modal="true" aria-labelledby="poster-heading">
+      <div class="poster-header">
+        <h2 id="poster-heading">成绩卡</h2>
+        <button type="button" id="poster-close" class="history-button">关闭</button>
+      </div>
+      <img id="poster-image" alt="别打地鼠成绩卡">
+      <div class="poster-actions" id="poster-actions"></div>
+    </section>
+  </div>
+</body>
+</html>

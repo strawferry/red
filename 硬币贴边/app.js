@@ -66,9 +66,9 @@
   }
 
   function layout(back, label, title, content) {
-    return '<div class="page">' + link("‹ 返回", back, undefined, "back-button") +
+    return '<div class="page"><div class="page-head">' + link("‹ 返回", back, undefined, "back-button") +
       (label ? '<span class="eyebrow">' + escape(label) + "</span>" : "") +
-      '<h1 class="page-title" tabindex="-1">' + escape(title) + "</h1>" + content + "</div>";
+      '</div><h1 class="page-title" tabindex="-1">' + escape(title) + "</h1>" + content + "</div>";
   }
 
   function renderHome() {
