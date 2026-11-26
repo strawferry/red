@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>薯条签</title>
+  <link rel="icon" href="./assets/logo.png" type="image/png">
+  <link rel="stylesheet" href="./style.css">
+  <script defer src="./game.js"></script>
+  <script defer src="./platform.js"></script>
+  <script defer src="./cards.js"></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <div class="shell" id="app">
+    <header class="masthead">
+      <button class="brand" type="button" data-action="home" disabled>
+        <img class="brand-mark" src="./assets/logo.png" alt="" width="38" height="38"><span>薯条签</span>
+      </button>
+      <span class="masthead-note">抽根薯条 · 看今日运</span>
+    </header>
+    <main>
+      <section id="home-view" aria-labelledby="home-title">
+        <div class="hero">
+          <span class="floaty f1" aria-hidden="true">🍟</span>
+          <span class="floaty f2" aria-hidden="true">🥤</span>
+          <span class="floaty f3" aria-hidden="true">✨</span>
+          <h1 id="home-title" tabindex="-1">抽一根薯条，<br><em>长度定今日运</em></h1>
+          <p>签筒里七根薯条，长短各不同。拖出一根，量一量厘米数，看看今天是什么签。</p>
+        </div>
+        <div class="best-card" id="best-card" hidden></div>
+        <div class="home-actions">
+          <button class="button primary" type="button" data-action="start" disabled>开始抽签 <span aria-hidden="true">→</span></button>
+        </div>
+        <p class="note how">玩法：按住一根露出的薯条往上拖，拖出来就是你的签。4.0–14.0cm 定签等：越长越旺，短的也别慌，签文负责把你哄开心。</p>
+        <p id="boot-status" class="note" role="status">正在热油。若长时间未就绪，请退出后重新打开。</p>
+      </section>
+      <section id="flow" hidden></section>
+    </main>
+    <p id="notice" class="notice" role="status" hidden></p>
+  </div>
+  <div id="poster-layer" class="poster-layer" hidden>
+    <section class="poster-dialog" role="dialog" aria-modal="true" aria-labelledby="poster-heading">
+      <div class="poster-header">
+        <h2 id="poster-heading">签文卡</h2>
+        <button type="button" id="poster-close" class="history-button">关闭</button>
+      </div>
+      <img id="poster-image" alt="薯条签签文卡">
+      <div class="poster-actions" id="poster-actions"></div>
+    </section>
+  </div>
+</body>
+</html>
